@@ -12,10 +12,12 @@ class MoyskladClient(BaseClient):
         from moysklad.api.document import SyncDocumentAPI
         from moysklad.api.bonus_program import SyncBonusProgramAPI
         from moysklad.api.webhook import SyncWebhookAPI
+        from moysklad.api.retail import SyncRetailAPI
         self.entity = SyncEntityAPI(self)
         self.document = SyncDocumentAPI(self)
         self.bonus_program = SyncBonusProgramAPI(self)
         self.webhook = SyncWebhookAPI(self)
+        self.retail = SyncRetailAPI(self)
 
     def get(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         url = self._build_url(path)
