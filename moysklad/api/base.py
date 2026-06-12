@@ -1,6 +1,7 @@
-from typing import Any, TypeVar, Generic, Type
+from typing import Any, TypeVar, Generic, Type, AsyncGenerator, Generator
 from pydantic import BaseModel
 from moysklad.models.base import ListResponse
+from moysklad.utils.filters import Filter
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -17,15 +18,31 @@ class AsyncEndpoint(Generic[T]):
         data = await self.client.get(f"{self.path}/{uuid}", params=params)
         return self.model.model_validate(data)
 
-    async def list(self, limit: int = 1000, offset: int = 0, expand: str | None = None) -> ListResponse[T]:
+    async def list(self, limit: int = 1000, offset: int = 0, expand: str | None = None, filter: str | Filter | None = None) -> ListResponse[T]:
         params = {"limit": limit, "offset": offset}
         if expand:
             params["expand"] = expand
+        if filter:
+            params["filter"] = str(filter)
+            
         data = await self.client.get(self.path, params=params)
         
         from pydantic import TypeAdapter
         adapter = TypeAdapter(ListResponse[self.model])
         return adapter.validate_python(data)
+
+    async def iter_all(self, expand: str | None = None, filter: str | Filter | None = None, chunk_size: int = 1000) -> AsyncGenerator[T, None]:
+        offset = 0
+        while True:
+            response = await self.list(limit=chunk_size, offset=offset, expand=expand, filter=filter)
+            for row in response.rows:
+                yield row
+            
+            offset += chunk_size
+            # The moysklad api returns 'size' which is total available
+            # However, sometimes it's simpler to break if we received less rows than limit
+            if len(response.rows) < chunk_size:
+                break
 
     async def create(self, data: dict[str, Any] | BaseModel) -> T:
         payload = data.model_dump(exclude_unset=True) if isinstance(data, BaseModel) else data
@@ -45,15 +62,29 @@ class SyncEndpoint(Generic[T]):
         data = self.client.get(f"{self.path}/{uuid}", params=params)
         return self.model.model_validate(data)
 
-    def list(self, limit: int = 1000, offset: int = 0, expand: str | None = None) -> ListResponse[T]:
+    def list(self, limit: int = 1000, offset: int = 0, expand: str | None = None, filter: str | Filter | None = None) -> ListResponse[T]:
         params = {"limit": limit, "offset": offset}
         if expand:
             params["expand"] = expand
+        if filter:
+            params["filter"] = str(filter)
+
         data = self.client.get(self.path, params=params)
         
         from pydantic import TypeAdapter
         adapter = TypeAdapter(ListResponse[self.model])
         return adapter.validate_python(data)
+
+    def iter_all(self, expand: str | None = None, filter: str | Filter | None = None, chunk_size: int = 1000) -> Generator[T, None, None]:
+        offset = 0
+        while True:
+            response = self.list(limit=chunk_size, offset=offset, expand=expand, filter=filter)
+            for row in response.rows:
+                yield row
+            
+            offset += chunk_size
+            if len(response.rows) < chunk_size:
+                break
 
     def create(self, data: dict[str, Any] | BaseModel) -> T:
         payload = data.model_dump(exclude_unset=True) if isinstance(data, BaseModel) else data
