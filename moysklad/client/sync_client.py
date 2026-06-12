@@ -9,7 +9,9 @@ class MoyskladClient(BaseClient):
         
         # Initialize API groups
         from moysklad.api.entity import SyncEntityAPI
+        from moysklad.api.document import SyncDocumentAPI
         self.entity = SyncEntityAPI(self)
+        self.document = SyncDocumentAPI(self)
 
     def get(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         url = self._build_url(path)
