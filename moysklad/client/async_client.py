@@ -11,9 +11,11 @@ class AsyncMoyskladClient(BaseClient):
         from moysklad.api.entity import AsyncEntityAPI
         from moysklad.api.document import AsyncDocumentAPI
         from moysklad.api.bonus_program import AsyncBonusProgramAPI
+        from moysklad.api.webhook import AsyncWebhookAPI
         self.entity = AsyncEntityAPI(self)
         self.document = AsyncDocumentAPI(self)
         self.bonus_program = AsyncBonusProgramAPI(self)
+        self.webhook = AsyncWebhookAPI(self)
 
     async def get(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         url = self._build_url(path)
