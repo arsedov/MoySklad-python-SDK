@@ -21,3 +21,18 @@ class ListResponse(BaseModel, Generic[T]):
     context: Context
     meta: Meta
     rows: list[T]
+
+class BaseEntity(BaseModel):
+    meta: Meta
+    id: str
+    accountId: str
+    updated: str
+    name: str
+
+class BaseDocument(BaseEntity):
+    moment: str
+    applicable: bool
+    sum: float
+    description: str | None = None
+    state: dict[str, Any] | None = None
+    organization: dict[str, Any] | None = None

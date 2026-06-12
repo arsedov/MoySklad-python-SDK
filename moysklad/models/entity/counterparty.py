@@ -1,15 +1,9 @@
-from pydantic import BaseModel
-from moysklad.models.base import Meta
+from moysklad.models.base import BaseEntity
 
-class Counterparty(BaseModel):
-    meta: Meta
-    id: str
-    accountId: str
+class Counterparty(BaseEntity):
     owner: dict | None = None
     shared: bool = False
     group: dict | None = None
-    updated: str
-    name: str
     description: str | None = None
     code: str | None = None
     externalCode: str

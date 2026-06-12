@@ -1,16 +1,9 @@
-from pydantic import BaseModel, Field
-from typing import Optional
-from moysklad.models.base import Meta
+from moysklad.models.base import BaseEntity
 
-class Product(BaseModel):
-    meta: Meta
-    id: str
-    accountId: str
+class Product(BaseEntity):
     owner: dict | None = None
     shared: bool = False
     group: dict | None = None
-    updated: str
-    name: str
     description: str | None = None
     code: str | None = None
     externalCode: str

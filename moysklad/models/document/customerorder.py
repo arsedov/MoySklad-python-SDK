@@ -1,6 +1,6 @@
-from pydantic import BaseModel
 from typing import Any
-from moysklad.models.base import Meta
+from moysklad.models.base import BaseDocument, Meta
+from pydantic import BaseModel
 
 class DocumentPosition(BaseModel):
     meta: Meta
@@ -11,18 +11,7 @@ class DocumentPosition(BaseModel):
     discount: float | None = None
     vat: int | None = None
     assortment: dict[str, Any]
-    
-class CustomerOrder(BaseModel):
-    meta: Meta
-    id: str
-    accountId: str
-    name: str
-    description: str | None = None
-    updated: str
-    moment: str
-    applicable: bool
-    sum: float
+
+class CustomerOrder(BaseDocument):
     agent: dict[str, Any]
-    organization: dict[str, Any]
-    state: dict[str, Any] | None = None
     positions: dict[str, Any] | None = None

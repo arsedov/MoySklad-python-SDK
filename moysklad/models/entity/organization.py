@@ -1,12 +1,6 @@
-from pydantic import BaseModel
-from moysklad.models.base import Meta
+from moysklad.models.base import BaseEntity
 
-class Organization(BaseModel):
-    meta: Meta
-    id: str
-    accountId: str
-    updated: str
-    name: str
+class Organization(BaseEntity):
     description: str | None = None
     code: str | None = None
     externalCode: str
