@@ -10,8 +10,10 @@ class AsyncMoyskladClient(BaseClient):
         # Initialize API groups
         from moysklad.api.entity import AsyncEntityAPI
         from moysklad.api.document import AsyncDocumentAPI
+        from moysklad.api.bonus_program import AsyncBonusProgramAPI
         self.entity = AsyncEntityAPI(self)
         self.document = AsyncDocumentAPI(self)
+        self.bonus_program = AsyncBonusProgramAPI(self)
 
     async def get(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         url = self._build_url(path)
