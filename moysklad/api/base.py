@@ -11,6 +11,9 @@ class AsyncEndpoint(Generic[T]):
         self.path = path
         self.model = model
 
+    async def metadata(self) -> dict[str, Any]:
+        return await self.client.get(f"{self.path}/metadata")
+
     async def get(self, uuid: str, expand: str | None = None) -> T:
         params = {}
         if expand:
@@ -54,6 +57,9 @@ class SyncEndpoint(Generic[T]):
         self.client = client
         self.path = path
         self.model = model
+
+    def metadata(self) -> dict[str, Any]:
+        return self.client.get(f"{self.path}/metadata")
 
     def get(self, uuid: str, expand: str | None = None) -> T:
         params = {}
