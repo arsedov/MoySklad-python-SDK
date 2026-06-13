@@ -16,6 +16,9 @@ class AsyncMoyskladClient(BaseClient):
         from moysklad.api.report import AsyncReportAPI
         from moysklad.api.audit import AsyncAuditAPI
         from moysklad.api.async_task import AsyncAsyncTaskAPI
+        from moysklad.api.context import AsyncContextAPI
+        from moysklad.api.trash import AsyncTrashAPI
+        
         self.entity = AsyncEntityAPI(self)
         self.document = AsyncDocumentAPI(self)
         self.bonus_program = AsyncBonusProgramAPI(self)
@@ -24,6 +27,8 @@ class AsyncMoyskladClient(BaseClient):
         self.report = AsyncReportAPI(self)
         self.audit = AsyncAuditAPI(self)
         self.async_task = AsyncAsyncTaskAPI(self)
+        self.context = AsyncContextAPI(self)
+        self.trash = AsyncTrashAPI(self)
 
     async def get(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         url = self._build_url(path)

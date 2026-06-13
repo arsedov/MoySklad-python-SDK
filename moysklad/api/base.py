@@ -14,6 +14,12 @@ class AsyncEndpoint(Generic[T]):
     async def metadata(self) -> dict[str, Any]:
         return await self.client.get(f"{self.path}/metadata")
 
+    async def export(self, uuid: str, template: dict[str, Any]) -> dict[str, Any]:
+        return await self.client.post(f"{self.path}/{uuid}/export", json={"template": template})
+
+    async def images(self, uuid: str) -> dict[str, Any]:
+        return await self.client.get(f"{self.path}/{uuid}/images")
+
     async def get(self, uuid: str, expand: str | None = None) -> T:
         params = {}
         if expand:
@@ -60,6 +66,12 @@ class SyncEndpoint(Generic[T]):
 
     def metadata(self) -> dict[str, Any]:
         return self.client.get(f"{self.path}/metadata")
+
+    def export(self, uuid: str, template: dict[str, Any]) -> dict[str, Any]:
+        return self.client.post(f"{self.path}/{uuid}/export", json={"template": template})
+
+    def images(self, uuid: str) -> dict[str, Any]:
+        return self.client.get(f"{self.path}/{uuid}/images")
 
     def get(self, uuid: str, expand: str | None = None) -> T:
         params = {}
