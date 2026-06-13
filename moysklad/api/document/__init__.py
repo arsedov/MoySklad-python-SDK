@@ -26,6 +26,9 @@ from moysklad.models.document.pricelist import PriceList
 from moysklad.models.document.internalorder import InternalOrder
 from moysklad.models.document.commissionreportin import CommissionReportIn
 from moysklad.models.document.commissionreportout import CommissionReportOut
+from moysklad.models.document.processing import Processing
+from moysklad.models.document.processingorder import ProcessingOrder
+from moysklad.models.document.processingplan import ProcessingPlan
 
 class AsyncDocumentAPI:
     def __init__(self, client):
@@ -56,6 +59,9 @@ class AsyncDocumentAPI:
         self.internalorder = AsyncEndpoint[InternalOrder](client, "entity/internalorder", InternalOrder)
         self.commissionreportin = AsyncEndpoint[CommissionReportIn](client, "entity/commissionreportin", CommissionReportIn)
         self.commissionreportout = AsyncEndpoint[CommissionReportOut](client, "entity/commissionreportout", CommissionReportOut)
+        self.processing = AsyncEndpoint[Processing](client, "entity/processing", Processing)
+        self.processingorder = AsyncEndpoint[ProcessingOrder](client, "entity/processingorder", ProcessingOrder)
+        self.processingplan = AsyncEndpoint[ProcessingPlan](client, "entity/processingplan", ProcessingPlan)
 
 class SyncDocumentAPI:
     def __init__(self, client):
@@ -87,3 +93,6 @@ class SyncDocumentAPI:
         self.internalorder = SyncEndpoint[InternalOrder](client, "entity/internalorder", InternalOrder)
         self.commissionreportin = SyncEndpoint[CommissionReportIn](client, "entity/commissionreportin", CommissionReportIn)
         self.commissionreportout = SyncEndpoint[CommissionReportOut](client, "entity/commissionreportout", CommissionReportOut)
+        self.processing = SyncEndpoint[Processing](client, "entity/processing", Processing)
+        self.processingorder = SyncEndpoint[ProcessingOrder](client, "entity/processingorder", ProcessingOrder)
+        self.processingplan = SyncEndpoint[ProcessingPlan](client, "entity/processingplan", ProcessingPlan)

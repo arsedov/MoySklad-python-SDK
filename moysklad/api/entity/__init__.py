@@ -19,6 +19,11 @@ from moysklad.models.entity.group import Group
 from moysklad.models.entity.region import Region
 from moysklad.models.entity.country import Country
 from moysklad.models.entity.customentity import CustomEntity
+from moysklad.models.entity.assortment import Assortment
+from moysklad.models.entity.taxrate import TaxRate
+from moysklad.models.entity.saleschannel import SalesChannel
+from moysklad.models.entity.bonustransaction import BonusTransaction
+from moysklad.models.entity.discount import Discount
 
 class AsyncEntityAPI:
     def __init__(self, client):
@@ -42,6 +47,11 @@ class AsyncEntityAPI:
         self.region = AsyncEndpoint[Region](client, "entity/region", Region)
         self.country = AsyncEndpoint[Country](client, "entity/country", Country)
         self.customentity = AsyncEndpoint[CustomEntity](client, "entity/customentity", CustomEntity)
+        self.assortment = AsyncEndpoint[Assortment](client, "entity/assortment", Assortment)
+        self.taxrate = AsyncEndpoint[TaxRate](client, "entity/taxrate", TaxRate)
+        self.saleschannel = AsyncEndpoint[SalesChannel](client, "entity/saleschannel", SalesChannel)
+        self.bonustransaction = AsyncEndpoint[BonusTransaction](client, "entity/bonustransaction", BonusTransaction)
+        self.discount = AsyncEndpoint[Discount](client, "entity/discount", Discount)
 
 class SyncEntityAPI:
     def __init__(self, client):
@@ -66,3 +76,8 @@ class SyncEntityAPI:
         self.region = SyncEndpoint[Region](client, "entity/region", Region)
         self.country = SyncEndpoint[Country](client, "entity/country", Country)
         self.customentity = SyncEndpoint[CustomEntity](client, "entity/customentity", CustomEntity)
+        self.assortment = SyncEndpoint[Assortment](client, "entity/assortment", Assortment)
+        self.taxrate = SyncEndpoint[TaxRate](client, "entity/taxrate", TaxRate)
+        self.saleschannel = SyncEndpoint[SalesChannel](client, "entity/saleschannel", SalesChannel)
+        self.bonustransaction = SyncEndpoint[BonusTransaction](client, "entity/bonustransaction", BonusTransaction)
+        self.discount = SyncEndpoint[Discount](client, "entity/discount", Discount)
