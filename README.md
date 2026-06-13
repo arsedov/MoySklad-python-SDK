@@ -9,7 +9,7 @@
 
 Для использования в ваших проектах:
 ```bash
-pip install git+https://github.com/ВАШ_АККАУНТ/ВАШ_РЕПОЗИТОРИЙ.git
+pip install git+https://github.com/arsedov/MoySklad-python-SDK.git
 ```
 
 ## Пример использования (Асинхронный - FastAPI)
