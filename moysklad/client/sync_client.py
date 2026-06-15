@@ -1,3 +1,4 @@
+import time
 from typing import Any
 import httpx
 from moysklad.client.base import BaseClient
@@ -5,8 +6,8 @@ from moysklad.client.base import BaseClient
 class MoyskladClient(BaseClient):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._client = httpx.Client(headers=self.headers)
-        
+        self._client = httpx.Client(headers=self.headers, timeout=self.timeout)
+
         # Initialize API groups
         from moysklad.api.entity import SyncEntityAPI
         from moysklad.api.document import SyncDocumentAPI
@@ -18,7 +19,7 @@ class MoyskladClient(BaseClient):
         from moysklad.api.async_task import SyncAsyncTaskAPI
         from moysklad.api.context import SyncContextAPI
         from moysklad.api.trash import SyncTrashAPI
-        
+
         self.entity = SyncEntityAPI(self)
         self.document = SyncDocumentAPI(self)
         self.bonus_program = SyncBonusProgramAPI(self)
@@ -30,25 +31,33 @@ class MoyskladClient(BaseClient):
         self.context = SyncContextAPI(self)
         self.trash = SyncTrashAPI(self)
 
+    def _request(self, method: str, path: str, **kwargs: Any) -> dict[str, Any]:
+        url = self._build_url(path)
+        for attempt in range(self.max_retries + 1):
+            response = self._client.request(method, url, **kwargs)
+            if response.status_code == 429 and attempt < self.max_retries:
+                time.sleep(self._retry_delay(response, attempt))
+                continue
+            return self._handle_response(response)
+        return self._handle_response(response)
+
     def get(self, path: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
-        url = self._build_url(path)
-        response = self._client.get(url, params=params)
-        return self._handle_response(response)
+        return self._request("GET", path, params=params)
 
-    def post(self, path: str, json: dict[str, Any] | None = None) -> dict[str, Any]:
-        url = self._build_url(path)
-        response = self._client.post(url, json=json)
-        return self._handle_response(response)
+    def post(self, path: str, json: Any | None = None) -> dict[str, Any]:
+        return self._request("POST", path, json=json)
 
-    def put(self, path: str, json: dict[str, Any] | None = None) -> dict[str, Any]:
-        url = self._build_url(path)
-        response = self._client.put(url, json=json)
-        return self._handle_response(response)
+    def put(self, path: str, json: Any | None = None) -> dict[str, Any]:
+        return self._request("PUT", path, json=json)
 
-    def delete(self, path: str) -> dict[str, Any]:
-        url = self._build_url(path)
-        response = self._client.delete(url)
-        return self._handle_response(response)
+    def delete(self, path: str, json: Any | None = None) -> dict[str, Any]:
+        return self._request("DELETE", path, json=json)
 
     def close(self):
         self._client.close()
+
+    def __enter__(self) -> "MoyskladClient":
+        return self
+
+    def __exit__(self, *exc: Any) -> None:
+        self.close()

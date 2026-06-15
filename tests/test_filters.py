@@ -1,4 +1,3 @@
-import pytest
 from moysklad.utils.filters import Filter
 
 def test_filter_builder():

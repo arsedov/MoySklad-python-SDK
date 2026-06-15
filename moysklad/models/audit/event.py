@@ -4,11 +4,11 @@ from typing import Any
 
 class AuditEvent(BaseModel):
     meta: Meta
-    id: str
-    accountId: str
-    uid: str
-    moment: str
-    eventType: str
-    objectType: str
+    id: str | None = None
+    accountId: str | None = None
+    uid: str | None = None
+    moment: str | None = None
+    eventType: str | None = None
+    objectType: str | None = None
     entity: dict[str, Any] | None = None
     diff: dict[str, Any] | None = None

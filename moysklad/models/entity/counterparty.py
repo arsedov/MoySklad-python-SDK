@@ -6,9 +6,9 @@ class Counterparty(BaseEntity):
     group: dict | None = None
     description: str | None = None
     code: str | None = None
-    externalCode: str
+    externalCode: str | None = None
     archived: bool = False
-    companyType: str
+    companyType: str | None = None
     inn: str | None = None
     kpp: str | None = None
     legalTitle: str | None = None

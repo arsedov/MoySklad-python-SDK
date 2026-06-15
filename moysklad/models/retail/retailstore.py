@@ -3,7 +3,7 @@ from moysklad.models.base import BaseEntity
 class RetailStore(BaseEntity):
     description: str | None = None
     code: str | None = None
-    externalCode: str
+    externalCode: str | None = None
     archived: bool = False
     controlCashierChecks: bool = False
     controlDiscountMarkup: bool = False

@@ -22,24 +22,31 @@ import asyncio
 from moysklad import AsyncMoyskladClient
 
 async def main():
-    client = AsyncMoyskladClient(token="your_moysklad_token")
+    # Клиент поддерживает асинхронный контекст-менеджер (соединения закроются сами).
+    async with AsyncMoyskladClient(token="your_moysklad_token") as client:
 
-    # 1. Получение товаров (Entity API) с пагинацией
-    products = await client.entity.product.list(limit=10, offset=0)
-    print(f"Загружено товаров: {len(products.rows)}")
+        # 1. Получение товаров (Entity API) с пагинацией
+        products = await client.entity.product.list(limit=10, offset=0)
+        print(f"Загружено товаров: {len(products.rows)}")
 
-    # 2. Получение доп. полей заказов (Metadata API)
-    meta = await client.document.customerorder.metadata()
-    print("Доп. поля заказов:", meta.get("attributes"))
+        # 2. Создание / обновление / удаление товара
+        created = await client.entity.product.create({"name": "Новый товар"})
+        updated = await client.entity.product.update(created.id, {"name": "Переименован"})
+        await client.entity.product.delete(updated.id)
 
-    # 3. Работа с розницей (Retail API)
-    shifts = await client.retail.retailshift.list()
+        # 3. Массовые операции (один запрос на пачку)
+        await client.entity.product.create_bulk([{"name": "A"}, {"name": "B"}])
+        await client.entity.product.delete_bulk([created.id, updated.id])
 
-    # 4. Отчеты по остаткам (Report API)
-    stock = await client.report.stock.all.list()
-    
-    # 5. Экспорт документа в PDF (Print API)
-    # await client.document.invoiceout.export("uuid", template={"id": "..."})
+        # 4. Полная выгрузка через генератор (учитывает meta.size)
+        async for product in client.entity.product.iter_all():
+            ...
+
+        # 5. Отчеты по остаткам (Report API)
+        stock = await client.report.stock.all.list()
+
+        # 6. Экспорт документа в PDF (Print API)
+        # await client.document.invoiceout.export("uuid", template={"id": "..."})
 
 if __name__ == "__main__":
     asyncio.run(main())
@@ -48,20 +55,23 @@ if __name__ == "__main__":
 ## Пример использования (Синхронный - Django / Скрипты)
 
 ```python
-from moysklad import MoyskladClient
+from moysklad import MoyskladClient, Filter
 
-client = MoyskladClient(token="your_moysklad_token")
+# Таймаут и число повторов при 429 настраиваются:
+client = MoyskladClient(token="your_moysklad_token", timeout=30.0, max_retries=3)
 
 # Получение информации о компании (Context API)
 settings = client.context.companysettings()
-print(settings.currency)
 
-# Загрузка заказов покупателей с фильтрами
-from moysklad.utils.filters import Filter, F
-f = Filter()
-f.add(F.eq("name", "12345"))
+# Загрузка заказов покупателей с фильтрами (билдер — fluent, через цепочку):
+f = Filter().eq("name", "12345").gt("sum", 1000)
 orders = client.document.customerorder.list(filter=f)
+
+client.close()  # либо: with MoyskladClient(token=...) as client: ...
 ```
+
+> При ответе `429 Too Many Requests` клиент автоматически повторяет запрос,
+> учитывая заголовок `X-RateLimit-Retry-After` (до `max_retries` раз).
 
 ## Структура SDK
 - `client.entity` — Все справочники (Товары, Контрагенты, Организации, Договоры, Комплекты, Серии и т.д.).

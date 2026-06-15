@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from moysklad.models.base import BaseEntity
 
 class Project(BaseEntity):

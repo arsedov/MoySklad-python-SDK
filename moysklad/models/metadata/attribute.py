@@ -3,8 +3,8 @@ from moysklad.models.base import Meta
 
 class Attribute(BaseModel):
     meta: Meta
-    id: str
-    name: str
-    type: str
+    id: str | None = None
+    name: str | None = None
+    type: str | None = None
     required: bool = False
     description: str | None = None

@@ -24,3 +24,9 @@ dev = [
 
 [tool.setuptools.packages.find]
 include = ["moysklad*"]
+
+[tool.setuptools.package-data]
+moysklad = ["py.typed"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

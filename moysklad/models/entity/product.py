@@ -6,7 +6,7 @@ class Product(BaseEntity):
     group: dict | None = None
     description: str | None = None
     code: str | None = None
-    externalCode: str
+    externalCode: str | None = None
     archived: bool = False
     pathName: str | None = None
     article: str | None = None

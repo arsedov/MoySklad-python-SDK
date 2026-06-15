@@ -2,7 +2,7 @@ from typing import Any
 from moysklad.models.base import BaseDocument
 
 class InvoiceOut(BaseDocument):
-    agent: dict[str, Any]
+    agent: dict[str, Any] | None = None
     paymentPlannedMoment: str | None = None
     customerOrder: dict[str, Any] | None = None
     demands: list[dict[str, Any]] | None = None
